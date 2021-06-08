@@ -225,10 +225,11 @@ body {
 /*logged in navbar start*/
 .navtop {
   position: fixed;
+  top: 0;
   background-color: #0d0106;
   height: 60px;
   width: 100%;
-  border: 0;
+  /* border: 0; */
   justify-content: center;
   z-index: 3;
 }
@@ -328,7 +329,7 @@ body.loggedin {
 }
 
 .home .table .list_container {
-  height: 46vh;
+  height: calc(60vh - 7.5rem);
   overflow-y: scroll;
 }
 
@@ -562,6 +563,24 @@ table {
   border: 1px solid #ff3b28;
   border-radius: 0.5rem;
   padding: 1rem;
+  margin-bottom: 1rem;
+}
+.loan_form form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+.loan_form select,
+.loan_form button {
+  margin-top: 1rem;
+}
+.loan_form button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #0b6efd;
+  color: #fff;
 }
 /*customer loan form style end*/
 .loggedin .header {
@@ -642,124 +661,6 @@ table {
 /*customer profile style end*/
 /*logged in content end*/
 
-@media screen and (max-width: 1000px) {
-  .main_login_container {
-    width: 100%;
-    flex-direction: column;
-    overflow-y: scroll;
-  }
-  .main_login_left,
-  .main_login_right {
-    width: 100%;
-  }
-  .login_form_container {
-    width: 90%;
-  }
-  .loggedin .content,
-  .loggedin .content.profile {
-    width: 90%;
-  }
-  .navtop {
-    padding: 10px;
-  }
-  .navtop .nav_container {
-    flex-flow: wrap;
-    width: 100%;
-  }
-  .navtop div h1 {
-    display: block;
-    flex-basis: 100%;
-  }
-  .content {
-    padding: 10px;
-    width: 100%;
-  }
-  .content form input[type="text"],
-  .content form input[type="password"],
-  .content form input[type="email"] {
-    width: 100%;
-  }
-  .burger_menu {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-  }
-  .burger_menu .burger_line {
-    height: 3px;
-    width: 25px;
-    margin-bottom: 5px;
-    background-color: #fff;
-    pointer-events: none;
-    transition: 0.3s ease-in-out;
-  }
-  .burger_menu.active .line_one {
-    transform: rotate(-45deg) translate(-5px, 6px);
-  }
-  .burger_menu.active .line_two {
-    opacity: 0;
-  }
-  .burger_menu.active .line_three {
-    transform: rotate(45deg) translate(-5px, -6px);
-  }
-  .nav_links {
-    position: absolute;
-    right: 0;
-    top: 60px;
-    height: calc(100vh - 60px);
-    background-color: #0d0106;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 350px;
-    transform: translateX(100%);
-    transition: 0.3s ease-in-out;
-  }
-  .nav_links.active {
-    transform: translateX(0);
-  }
-  .navtop .nav_links a {
-    padding: 10px 0;
-    border-bottom: rgba(255, 255, 255, 0.5) 0.5px solid;
-    width: 280px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .loggedin .content,
-  .loggedin .content.profile {
-    width: 96%;
-  }
-  .content .block table {
-    width: 100%;
-  }
-  .content .block table td {
-    white-space: nowrap;
-  }
-  .pic_uploader_container {
-    flex-direction: column;
-  }
-}
-@media screen and (max-width: 375px) {
-  .loggedin .content,
-  .loggedin .content.profile {
-    width: 100%;
-  }
-  .content .block table {
-    font-size: 0.8rem;
-  }
-  .content .block {
-    padding: 5px;
-  }
-  .choose_file_container {
-    width: 16rem;
-  }
-}
-@media screen and (max-width: 375px) {
-  .nav_links {
-    width: 320px;
-  }
-}
-
 /*Admin only style start*/
 
 html {
@@ -768,7 +669,6 @@ html {
 
 body {
   position: relative;
-  min-height: 100%;
   color: #555555;
   background-color: #f0f2f5;
   margin: 0;
@@ -1110,14 +1010,111 @@ main .error {
   color: #4a536e;
   padding-right: 15px;
 }
+/*Admin only style end*/
 
 @media screen and (max-width: 1200px) {
+  /*Admin only start*/
   .content.profile table {
     width: 75%;
   }
+  .responsive_hidden_1200 {
+    display: none;
+  }
+  /*Admin only end*/
 }
 
 @media screen and (max-width: 1000px) {
+  .main_login_container {
+    width: 100%;
+    flex-direction: column;
+    overflow-y: scroll;
+  }
+  .main_login_left,
+  .main_login_right {
+    width: 100%;
+  }
+  .login_form_container {
+    width: 90%;
+  }
+  .loggedin .content,
+  .loggedin .content.profile {
+    width: 90%;
+  }
+  .navtop {
+    padding: 10px;
+  }
+  .navtop .nav_container {
+    flex-flow: wrap;
+    width: 100%;
+  }
+  .navtop div h1 {
+    display: block;
+    flex-basis: 100%;
+  }
+  .content {
+    padding: 10px;
+    width: 100%;
+  }
+  .content form input[type="text"],
+  .content form input[type="password"],
+  .content form input[type="email"] {
+    width: 100%;
+  }
+  .burger_menu {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  .burger_menu .burger_line {
+    height: 3px;
+    width: 25px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    pointer-events: none;
+    transition: 0.3s ease-in-out;
+  }
+  .burger_menu.active .line_one {
+    transform: rotate(-45deg) translate(-5px, 6px);
+  }
+  .burger_menu.active .line_two {
+    opacity: 0;
+  }
+  .burger_menu.active .line_three {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
+  .nav_links {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    height: calc(100vh - 60px);
+    background-color: #0d0106;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 350px;
+    transform: translateX(100%);
+    transition: 0.3s ease-in-out;
+  }
+  .link_hidden {
+    display: none;
+  }
+  .nav_links.active {
+    transform: translateX(0);
+  }
+  .navtop .nav_links a {
+    padding: 10px 0;
+    border-bottom: rgba(255, 255, 255, 0.5) 0.5px solid;
+    width: 280px;
+  }
+  .responsive_hidden_1000 {
+    display: none;
+  }
+
+  .choose_file_container {
+    width: 18rem;
+  }
+
+  /*Admin only start*/
   header .responsive-toggle {
     display: flex;
   }
@@ -1151,15 +1148,58 @@ main .error {
     border-bottom: rgba(255, 255, 255, 0.5) 0.5px solid;
     width: 280px;
   }
+  /*admin only end*/
 }
-
 @media screen and (max-width: 768px) {
+  .loggedin .content,
+  .loggedin .content.profile {
+    width: 96%;
+  }
+  .content .block table {
+    width: 100%;
+  }
+  .content .block table td {
+    white-space: nowrap;
+  }
+  .pic_uploader_container {
+    flex-direction: column;
+  }
+  .responsive_hidden_768 {
+    display: none;
+  }
+  .search_input {
+    flex-direction: column;
+  }
+  .home .table .list_container {
+    height: calc(60vh - 12.5rem);
+  }
+  /*Admin only start*/
   .content.profile table {
     width: 100%;
   }
+  .search_input select {
+    height: 2.5rem;
+  }
+  /*Admin only end*/
 }
-
 @media screen and (max-width: 375px) {
+  .loggedin .content,
+  .loggedin .content.profile {
+    width: 100%;
+  }
+  .content .block table {
+    font-size: 0.8rem;
+  }
+  .content .block {
+    padding: 5px;
+  }
+  .choose_file_container {
+    width: 16rem;
+  }
+  /*Admin only start*/
+  .nav_links {
+    width: 320px;
+  }
   .content.profile table {
     font-size: 0.8rem;
   }
@@ -1168,5 +1208,5 @@ main .error {
     padding: 5px;
     margin: 0;
   }
+  /*Admin only end*/
 }
-/*Admin only style end*/

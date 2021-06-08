@@ -33,7 +33,7 @@
 				<div class="nav_logo">
 					<h1 >Website Title</h1>
 				</div>
-				<div class="nav_links">
+				<div class="nav_links" data-nav-links>
 					<a href="home.php"><i class="fas fa-home"></i>Inicio</a>
 					<a href="profile.php"><i class="fas fa-user-circle"></i>Perfil</a>
 					<?php if ($_SESSION['role'] == 'Admin'): ?>
@@ -41,7 +41,7 @@
 					<?php endif; ?>
 					<a href="logout.php"><i class="fas fa-sign-out-alt"></i>Salir</a>
 				</div>
-				<div class="burger_menu">
+				<div class="burger_menu" data-burger-menu>
 					<div class="burger_line line_one"></div>
 					<div class="burger_line line_two"></div>
 					<div class="burger_line line_three"></div>

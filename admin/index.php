@@ -23,7 +23,7 @@ $stmt->bind_result($id, $name, $lastname, $password, $email, $activation_code, $
                     <td>#</td>
                     <td>Nombre Completo</td>
                     <td class="responsive-hidden">Correo</td>
-                    <td class="responsive-hidden">Código de activación</td>
+                    <td class="responsive_hidden_1200">Código de activación</td>
                     <td class="responsive-hidden">Rango</td>
                 </tr>
             </thead>
@@ -38,7 +38,7 @@ $stmt->bind_result($id, $name, $lastname, $password, $email, $activation_code, $
                     <td><?=$id?></td>
                     <td><?=$name." ".$lastname?></td>
                     <td class="responsive-hidden"><?=$email?></td>
-                    <td class="responsive-hidden"><?=$activation_code?></td>
+                    <td class="responsive_hidden_1200"><?=$activation_code?></td>
                     <td class="responsive-hidden"><?=$role?></td>
                 </tr>
                 <?php endwhile; ?>

@@ -1,9 +1,7 @@
 //Selectors
-const openRegistrationBtn = document.querySelector(".open_registration");
-const closeRegistrationBtn = document.querySelector(".close_registration");
-const registrationContainer = document.querySelector(
-  ".main_registration_container"
-);
+const openRegistrationBtn = document.querySelector("[data-open-reg-btn]");
+const closeRegistrationBtn = document.querySelector("[data-close-reg-btn]");
+const registrationContainer = document.querySelector("[data-reg-container]");
 const loginMsg = document.querySelector(".login_msg");
 
 const form = document.querySelector(".registration_form");

@@ -43,17 +43,52 @@ if (isset($_GET['id'])) {
 }
 include_once  'header.php';
 ?>
-<div class="loan_form_background">
+<div class="loan_form_background" data-loan-form-bkgd>
 
 </div>
-<div class="loan_form">
+<div class="loan_form" data-loan-form>
 <div class="loan_form_inner_container">
+	<?php 
+		$stmt = $con->prepare('SELECT id, name, lastname role FROM accounts');
+		$stmt->execute();
+		$stmt->store_result();
+		$stmt->bind_result($id, $name, $lastname);
+	?>
     <h2>Forma de préstamo</h2>
 
-    <div class="alert">
-        <p><b>Atención:</b>Si desea cambiar el nombre de socio bajo el cual se va a registrar este préstamo, seleccione el nombre del socio en esta ventana, de lo contrario ignore este cuadro y continúe con el proceso.</p>
-    </div>
 
+	<form action="" method="post">
+		<div class="alert">
+        	<p><b>Atención:</b>Si desea cambiar el nombre de socio bajo el cual se va a registrar este préstamo, seleccione el nombre del socio en esta ventana, de lo contrario ignore este cuadro y continúe con el proceso.</p>
+			<select name="" id="">
+			<option value="default">Seleccionar socio</option>
+			<?php if ($stmt->num_rows == 0): ?>
+                <tr>
+                    <option>No usuarios</option>
+                </tr>
+                <?php else: ?>
+                <?php while ($stmt->fetch()): ?>
+					<option value="<?=$id?>"><?=$name." ".$lastname?></option>
+                <?php endwhile; ?>
+                <?php endif; ?>
+			</select>
+		</div>
+
+		<select name="" id="">
+			<option value="none">Selecciona cantidad</option>
+			<option value="1000">1000.00 pesos</option>
+			<option value="2000">2000.00 pesos</option>
+			<option value="3000">3000.00 pesos</option>
+			<option value="4000">4000.00 pesos</option>
+			<option value="5000">5000.00 pesos</option>
+			<option value="6000">6000.00 pesos</option>
+			<option value="7000">7000.00 pesos</option>
+			<option value="8000">8000.00 pesos</option>
+			<option value="9000">9000.00 pesos</option>
+			<option value="10000">10,000.00 pesos</option>
+		</select>
+		<button>Otorgar prestamo</button>
+	</form>
 </div>
 </div>
 <div class="header">
@@ -74,7 +109,7 @@ include_once  'header.php';
     </div>
     <div class="btns_container">
         <?php if ($customer['customerStatus'] == '0'): ?>
-		    <button class="loan_btn">Iniciar prestamo</button>
+		    <button class="loan_btn" data-loan-btn>Iniciar prestamo</button>
         <?php elseif ($customer['customerStatus'] == '1'): ?>
             <button>Hacer pago</button>
             <button>Renovar prestamo</button>
@@ -82,56 +117,56 @@ include_once  'header.php';
     </div>
 </div>
 <div class="personal_info_btn_container">
-    <button class="personal_info_btn">
+    <button class="personal_info_btn" data-expand-info-btn>
         Expander perfil <i class="fas fa-chevron-down"></i>
     </button>
 </div>
-<div class="content profile hidden active">
-<div class="error_display">
-	<?php
-		$fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-
-		if (strpos($fullUrl, "upload=success") == true){
-			echo"<span class='success'>¡La imagen/documento ha sido subido exitosamente!</span>";
-		}elseif(strpos($fullUrl, "upload=file-too-big") == true){
-			echo"<span class='fail'>¡El documento es muy grande(10 mb por documento maximo)!</span>";
-		}elseif(strpos($fullUrl, "upload=error") == true){
-			echo"<span class='fail'>¡Hubo un error al tratar de subir este documento!</span>";
-		}elseif(strpos($fullUrl, "upload=incompatible") == true){
-			echo"<span class='fail'>¡No puedes subir documentos de este tipo (solo JPG y JPEG)!</span>";
-		}
-	?>
-</div>
-<div class="pic_uploader_container">
-	<div class="pic_uploader">
+<div class="content profile hidden active" data-personal-info-container>
+	<div class="error_display">
 		<?php
-			$sql = "SELECT * FROM customers";
-			$result = mysqli_query($con, $sql);
-			if(mysqli_num_rows($result) > 0){
-					$sqlImg = "SELECT * FROM customers WHERE id='$id'";
-					$resultImgOne = mysqli_query($con, $sqlImg);
-					while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
-						echo "<div class='pic_container'>";
-						if($rowImgOne['imgStatus_1'] == 0){
-							echo "<img src='./customer_uploads/profile1".$id.".jpg' class='profile_pics'>";
-						}else{
-							echo "<img src='./IMG/profiledefault.jpg' class='profile_pics'>";
-						}
-					echo "</div>";
-					}
-			}else{
-				echo"No existen usuarios en la base de datos!";
+			$fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+			if (strpos($fullUrl, "upload=success") == true){
+				echo"<span class='success'>¡La imagen/documento ha sido subido exitosamente!</span>";
+			}elseif(strpos($fullUrl, "upload=file-too-big") == true){
+				echo"<span class='fail'>¡El documento es muy grande(10 mb por documento maximo)!</span>";
+			}elseif(strpos($fullUrl, "upload=error") == true){
+				echo"<span class='fail'>¡Hubo un error al tratar de subir este documento!</span>";
+			}elseif(strpos($fullUrl, "upload=incompatible") == true){
+				echo"<span class='fail'>¡No puedes subir documentos de este tipo (solo JPG y JPEG)!</span>";
 			}
 		?>
-		<span>Comprobante de domicilio</span>
-		<form action="customerUpload.php?id=<?php echo $id; ?>" method="post" enctype="multipart/form-data">
-			<input type="file" name="file" id="select_file1" hidden>
-			<div class="choose_file_container">
-				<label for="select_file1">Selecciona documento</label>
-				<span id="file_chosen_one">Ningún documento seleccionado</span>
-			</div>
-			<button type="submit" name="submit1">Guardar Documento</button>
-		</form>
+	</div>
+	<div class="pic_uploader_container">
+		<div class="pic_uploader">
+			<?php
+				$sql = "SELECT * FROM customers";
+				$result = mysqli_query($con, $sql);
+				if(mysqli_num_rows($result) > 0){
+						$sqlImg = "SELECT * FROM customers WHERE id='$id'";
+						$resultImgOne = mysqli_query($con, $sqlImg);
+						while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
+							echo "<div class='pic_container'>";
+							if($rowImgOne['imgStatus_1'] == 0){
+								echo "<img src='./customer_uploads/profile1".$id.".jpg' class='profile_pics'>";
+							}else{
+								echo "<img src='./IMG/profiledefault.jpg' class='profile_pics'>";
+							}
+						echo "</div>";
+						}
+				}else{
+					echo"No existen usuarios en la base de datos!";
+				}
+			?>
+	<span>Comprobante de domicilio</span>
+	<form action="customerUpload.php?id=<?php echo $id; ?>" method="post" enctype="multipart/form-data">
+		<input type="file" name="file" id="select_file1" hidden>
+		<div class="choose_file_container">
+			<label for="select_file1">Selecciona documento</label>
+			<span id="file_chosen_one">Ningún documento seleccionado</span>
+		</div>
+		<button type="submit" name="submit1">Guardar Documento</button>
+	</form>
 	</div>
 	<div class="pic_uploader">
 	<?php
@@ -317,9 +352,9 @@ include_once  'header.php';
 </div>
     <script>
         //loan window opener
-        const loanFormBack = document.querySelector('.loan_form_background')
-        const loanForm = document.querySelector('.loan_form')
-        const loanBtn = document.querySelector('.loan_btn')
+        const loanFormBack = document.querySelector('[data-loan-form-bkgd]');
+        const loanForm = document.querySelector('[data-loan-form]');
+        const loanBtn = document.querySelector('[data-loan-btn]');
 
         loanBtn.addEventListener("click", function(){
             loanFormBack.classList.add("active")
@@ -334,8 +369,8 @@ include_once  'header.php';
         
 
         //detailed profile opener
-        const expandPersonalInfoBtn = document.querySelector('.personal_info_btn');
-        const personalInfoContainer = document.querySelector('.content.profile.hidden');
+        const expandPersonalInfoBtn = document.querySelector('[data-expand-info-btn]');
+        const personalInfoContainer = document.querySelector('[data-personal-info-container]');
 
         expandPersonalInfoBtn.addEventListener("click", function(){
             if(personalInfoContainer.classList.contains("active")){

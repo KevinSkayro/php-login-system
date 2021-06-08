@@ -9,20 +9,20 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 
 ?>
 		<div class="content home">
-			<h2>Inicio</h2>
+		<!-- <h2>inicio</h2> -->
 			<p class="block">¡Bienvenido(a), <?=$_SESSION['name']?>!</p>
 			<div class="links">
     			<a href="addCustomer.php">Nuevo cliente</a>
 			</div>
 			<div class="search_container">
 				<div class="search_input">
-					<input type="text" name="customer_search" id="customer_search" class="search_bar" onkeyup="myFunction()">
+					<input type="text" name="customer_search" id="customer_search" class="search_bar" data-customer-search onkeyup="updateSearch()">
 					<select name="filter_customers" id="filter_customers">
 						<option value="all">Todos</option>
 						<option value="active">Vigente</option>
 						<option value="inactive">Vencidos</option>
 					</select>
-					<select name="filterType" id="filterType">
+					<select name="filterType" id="filterType" data-filter-type>
 						<option value="ine">Buscar por clave de elector</option>
 						<option value="name">Buscar por Nombre</option>
 					</select>
@@ -31,8 +31,8 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 					<div class="listHead">
 						<div class="column id">#</div>
 						<div class="column">Nombre Completo</div>
-						<div class="column">Clave de elector</div>
-						<div class="column">Vigencia</div>
+						<div class="column responsive_hidden_1000">Clave de elector</div>
+						<div class="column responsive_hidden_768">Vigencia</div>
 					</div>
 					<div class="list_container">
 						<ul id="ul">
@@ -45,12 +45,12 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 							<li class="row" onclick="location.href='customer.php?id=<?=$id?>'">
 								<div class="column id"><?=$id?></div>
 								<div class="column name"><?=$name." ".$lastname?></div>
-								<div class="column ine"><?=$ine?></div>
+								<div class="column ine responsive_hidden_1000"><?=$ine?></div>
 								<?php if ($customerStatus == '0'): ?>
-									<div class="column">Vencido</div>
+									<div class="column responsive_hidden_768">Vencido</div>
 
 								<?php elseif ($customerStatus == '1'): ?>
-									<div class="column">Vigente</div>
+									<div class="column responsive_hidden_768">Vigente</div>
 								<?php endif; ?>
 								
 							</li>
@@ -62,10 +62,10 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 			</div>
 		</div>
 		<script>
-			function myFunction() {
+			function updateSearch() {
 				// variables
-				const searchByIneOrName = document.querySelector('#filterType')
-				const input = document.getElementById('customer_search');
+				const searchByIneOrName = document.querySelector('[data-filter-type]');
+				const input = document.querySelector('[data-customer-search]');
 				const filter = input.value.toUpperCase();
 				const ine = document.querySelectorAll('div.ine')
 				const name = document.querySelectorAll('div.name')

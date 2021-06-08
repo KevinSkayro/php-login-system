@@ -68,14 +68,14 @@ if (isset($_COOKIE['rememberme']) && !empty($_COOKIE['rememberme'])) {
               <button type="submit">Iniciar sesión</button>
             </form>
             <div class="create_new_account">
-              <button class="open_registration">Crear nueva cuenta</button>
+              <button class="open_registration" data-open-reg-btn>Crear nueva cuenta</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="main_registration_container">
+      <div class="main_registration_container" data-reg-container>
         <div class="close_registration_container">
-          <button class="close_registration">
+          <button class="close_registration" data-close-reg-btn>
             <i class="fas fa-chevron-down"></i>
           </button>
         </div>

@@ -30,17 +30,17 @@ echo <<<EOT
 	<body class="admin">
         <header>
             <h1>Panel de Administración</h1>
-            <div class="burger_menu">
-                <div class="burger_line line_one"></div>
-                <div class="burger_line line_two"></div>
-                <div class="burger_line line_three"></div>
+            <div class="burger_menu" data-burger-menu>
+                <div class="burger_line line_one" ></div>
+                <div class="burger_line line_two" ></div>
+                <div class="burger_line line_three" ></div>
             </div>
         </header>
-        <aside class="nav_links admin">
+        <aside class="nav_links admin" data-nav-links>
             <a href="../home.php"><i class="fas fa-home"></i>Inicio</a>
             <a href="index.php"><i class="fas fa-users"></i>Perfiles</a>
-            <a href="emailtemplate.php"><i class="fas fa-envelope"></i>Plantilla de correo</a>
-            <a href="settings.php"><i class="fas fa-tools"></i>Configuraciones</a>
+            <a class="link_hidden" href="emailtemplate.php"><i class="fas fa-envelope"></i>Plantilla de correo</a>
+            <a class="link_hidden" href="settings.php"><i class="fas fa-tools"></i>Configuraciones</a>
             <a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Salir</a>
         </aside>
         <main class="responsive-width-100">
