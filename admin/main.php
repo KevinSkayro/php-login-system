@@ -1,7 +1,7 @@
 <?php
 // Include the root "dbhandler.php" file and check if user is logged-in...
-include_once '../config.php';
-include_once '../dbhandler.php';
+include_once '../processes/config.php';
+include_once '../processes/dbhandler.php';
 check_loggedin($con, '../index.php');
 $stmt = $con->prepare('SELECT password, email, role, name FROM accounts WHERE id = ?');
 // Get the account info using the logged-in session ID
@@ -38,10 +38,12 @@ echo <<<EOT
         </header>
         <aside class="nav_links admin" data-nav-links>
             <a href="../home.php"><i class="fas fa-home"></i>Inicio</a>
-            <a href="index.php"><i class="fas fa-users"></i>Perfiles</a>
+            <a href="index.php"><i class="fas fa-user"></i>Perfiles</a>
+            <a href="plazas.php"><i class="fas fa-map-marker-alt"></i>Plazas</a>
+            <a href="groups.php"><i class="fas fa-users"></i>Grupos</a>
             <a class="link_hidden" href="emailtemplate.php"><i class="fas fa-envelope"></i>Plantilla de correo</a>
             <a class="link_hidden" href="settings.php"><i class="fas fa-tools"></i>Configuraciones</a>
-            <a href="../logout.php"><i class="fas fa-sign-out-alt"></i>Salir</a>
+            <a href="../processes/logout.php"><i class="fas fa-sign-out-alt"></i>Salir</a>
         </aside>
         <main class="responsive-width-100">
 EOT;

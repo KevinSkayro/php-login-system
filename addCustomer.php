@@ -1,6 +1,6 @@
 <?php
 
-include_once 'dbhandler.php';
+include_once 'processes/dbhandler.php';
 // Default input product values
 $customer = array(
     'group_name' => '',
@@ -154,7 +154,37 @@ if ($page == 'Edit'){
 
         <p>Información de colaborador:</p>
         <label for="group_name">Nombre de grupo</label>
-        <input type="text" id="group_name" name="group_name" placeholder="Nombre de grupo" value="<?=$customer['group_name']?>">
+        <select name="group_name" id="group_name">
+            <?php if ($page == 'Edit'): ?>
+                <?php
+                    $stmt = $con->prepare('SELECT id, group_name FROM groups WHERE id = ?');
+                    $stmt->bind_param('i', $customer['group_name']);
+                    $stmt->execute();
+                    $stmt->bind_result($groupID, $groupName);
+                    $stmt->fetch();
+                    $stmt->close();
+
+
+                ?>
+                <option value="<?=$groupID?>"><?=$groupID." | ".$groupName?></option>
+            <?php elseif ($page == 'Create'): ?>
+                <option value="" selected="true" disabled="disabled">Selecciona grupo</option>
+            <?php endif; ?>
+            <?php 
+                $stmt = $con->prepare('SELECT id, group_name FROM groups');
+                $stmt->execute();
+                $stmt->store_result();
+                $stmt->bind_result($groupID, $groupName);
+
+            ?>
+            <?php if ($stmt->num_rows == 0): ?>
+                <option disabled="disabled">No existe ningun grupo en la base de datos</option>
+            <?php else: ?>
+                <?php while ($stmt->fetch()): ?>
+                    <option value="<?=$groupID?>"><?=$groupID." | ".$groupName?></option>
+                <?php endwhile; ?>
+            <?php endif; ?>
+        </select>
 
         <p>Información de Aval:</p>
         <label for="guar_name">Nombre</label>

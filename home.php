@@ -1,11 +1,11 @@
 <?php
-include 'dbhandler.php';
+include 'processes/dbhandler.php';
 check_loggedin($con);
 include 'header.php';
-$stmt = $con->prepare('SELECT id, name, lastname, ine, customerStatus  FROM customers');
+$stmt = $con->prepare('SELECT id, name, lastname, ine, customerStatus, registration_date  FROM customers');
 $stmt->execute();
 $stmt->store_result();
-$stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
+$stmt->bind_result($id, $name, $lastname, $ine, $customerStatus, $registrationDate);
 
 ?>
 		<div class="content home">
@@ -17,10 +17,10 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 			<div class="search_container">
 				<div class="search_input">
 					<input type="text" name="customer_search" id="customer_search" class="search_bar" data-customer-search onkeyup="updateSearch()">
-					<select name="filter_customers" id="filter_customers">
+					<select name="filter_customers" id="filter_customers" data-active-inactive onchange="filterSearch()">
 						<option value="all">Todos</option>
 						<option value="active">Vigente</option>
-						<option value="inactive">Vencidos</option>
+						<option value="unactive">Vencidos</option>
 					</select>
 					<select name="filterType" id="filterType" data-filter-type>
 						<option value="ine">Buscar por clave de elector</option>
@@ -47,10 +47,23 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 								<div class="column name"><?=$name." ".$lastname?></div>
 								<div class="column ine responsive_hidden_1000"><?=$ine?></div>
 								<?php if ($customerStatus == '0'): ?>
-									<div class="column responsive_hidden_768">Vencido</div>
-
+									<?php
+										//get todays date
+										$todaysDate = date('d-m-Y');
+										//get registration date
+										$dateSplit = explode(',',$registrationDate);
+										$date1=date_create($dateSplit[2]);
+										$date2=date_create($todaysDate);
+										$diff=date_diff($date1,$date2);
+										$DateDiff = $diff->format("%a");
+									?>
+									<?php if ($DateDiff <= 7 ): ?>
+										<div class="column activity_status unactive responsive_hidden_768">Nuevo</div>
+									<?php else: ?>
+										<div class="column activity_status unactive responsive_hidden_768">Vencido</div>
+									<?php endif; ?>
 								<?php elseif ($customerStatus == '1'): ?>
-									<div class="column responsive_hidden_768">Vigente</div>
+									<div class="column activity_status active responsive_hidden_768">Vigente</div>
 								<?php endif; ?>
 								
 							</li>
@@ -62,18 +75,24 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 			</div>
 		</div>
 		<script>
+			//Global variables
+			const filterActiveInactive = document.querySelector('[data-active-inactive]');
+			const status = document.querySelectorAll('div.activity_status');
+			const row = document.querySelectorAll('.row');
+
+			//filter on key up by ine and name
 			function updateSearch() {
-				// variables
+				// local variables
 				const searchByIneOrName = document.querySelector('[data-filter-type]');
 				const input = document.querySelector('[data-customer-search]');
 				const filter = input.value.toUpperCase();
-				const ine = document.querySelectorAll('div.ine')
-				const name = document.querySelectorAll('div.name')
-				const row = document.querySelectorAll('.row')
+				const ine = document.querySelectorAll('div.ine');
+				const name = document.querySelectorAll('div.name');
+				
 				// Loop through all list items, and hide those who don't match the search query
-				if(searchByIneOrName.value == "ine"){
+				if (searchByIneOrName.value == "ine") {
 					for (let i = 0; i < ine.length; i++) {
-						let txt = ine[i]
+						let txt = ine[i];
 						let txtValue = txt.textContent || txt.innerText;
 						if (txtValue.toUpperCase().indexOf(filter) > -1) {
 						row[i].style.display = "";
@@ -81,9 +100,9 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 						row[i].style.display = "none";
 						}
 					}
-				}else if(searchByIneOrName.value == "name"){
+				} else if (searchByIneOrName.value == "name") {
 					for (let i = 0; i < name.length; i++) {
-						txt = name[i]
+						txt = name[i];
 						txtValue = txt.textContent || txt.innerText;
 						if (txtValue.toUpperCase().indexOf(filter) > -1) {
 						row[i].style.display = "";
@@ -92,10 +111,47 @@ $stmt->bind_result($id, $name, $lastname, $ine, $customerStatus);
 						}
 					}
 				}
+				
+				if (filterActiveInactive.value == "active") {
+					for (let i = 0; i < status.length; i++) {
+						if (status[i].classList.contains('unactive')) {
+							row[i].style.display = "none";
+						}
+					}
+				} else if (filterActiveInactive.value == "unactive") {
+					for (let i = 0; i < status.length; i++) {
+						if (status[i].classList.contains('active')) {
+							row[i].style.display = "none";
+						}
+					}
+				}
+			}
+			//filter on change to see active/unactive customers
+			function filterSearch() {
+				if (filterActiveInactive.value == "active") {
+					for (let i = 0; i < status.length; i++) {
+						if (status[i].classList.contains('unactive')) {
+							row[i].style.display = "none";
+						} else {
+							row[i].style.display = "";
+						}
+					}
+				} else if (filterActiveInactive.value == "unactive") {
+					for (let i = 0; i < status.length; i++) {
+						if (status[i].classList.contains('active')) {
+							row[i].style.display = "none";
+						} else {
+							row[i].style.display = "";
+						}
+					}
+				} else {
+					for (let i = 0; i < row.length; i++) {
+						row[i].style.display = "";
+					}
+				}
 			}
 		</script>
 		<script src="./JS/menu.js">
-
 		</script>
 	</body>
 </html>

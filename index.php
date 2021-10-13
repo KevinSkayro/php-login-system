@@ -1,5 +1,5 @@
 <?php
-include 'dbhandler.php';
+include 'processes/dbhandler.php';
 // No need for the user to see the login form if they're logged-in so redirect them to the home page
 if (isset($_SESSION['loggedin'])) {
 	// If the user is not logged in redirect to the home page.
@@ -44,7 +44,7 @@ if (isset($_COOKIE['rememberme']) && !empty($_COOKIE['rememberme'])) {
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,500&display=swap"
       rel="stylesheet"
     />
-    <title>Castañeda</title>
+    <title>Bank</title>
   </head>
   <body>
     <div class="main_page_container">
@@ -57,7 +57,7 @@ if (isset($_COOKIE['rememberme']) && !empty($_COOKIE['rememberme'])) {
           <div class="login_form_container">
             <span class="login_header">Inicio de sesión</span>
             <div class="msg login_msg"></div>
-            <form action="authenticate.php" method="post" class="login_form">
+            <form action="processes/authenticate.php" method="post" class="login_form">
               <input type="text" name="id" placeholder="Código de empleado" />
               <input
                 type="password"
@@ -67,51 +67,8 @@ if (isset($_COOKIE['rememberme']) && !empty($_COOKIE['rememberme'])) {
               />
               <button type="submit">Iniciar sesión</button>
             </form>
-            <div class="create_new_account">
-              <button class="open_registration" data-open-reg-btn>Crear nueva cuenta</button>
-            </div>
+
           </div>
-        </div>
-      </div>
-      <div class="main_registration_container" data-reg-container>
-        <div class="close_registration_container">
-          <button class="close_registration" data-close-reg-btn>
-            <i class="fas fa-chevron-down"></i>
-          </button>
-        </div>
-        <div class="registration_form_container">
-          <span class="registration_header">Registrate</span>
-          <div class="msg"></div>
-          <form action="register.php" method="post" class="registration_form">
-            <input type="text" name="name" placeholder="Nombre(s)" required />
-            <input
-              type="text"
-              name="lastname"
-              placeholder="Apellidos"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Correo electrónico"
-              required
-            />
-            <input
-              type="password"
-              name="newPassword"
-              placeholder="Contraseña"
-              required
-            />
-            <input
-              type="password"
-              name="repeatPwd"
-              placeholder="Confirma contraseña"
-              required
-            />
-            <!-- <label for="date of birth">Fecha de nacimiento</label>
-            <input type="date" name="dob" required /> -->
-            <button type="submit" name="submit">Registrarte</button>
-          </form>
         </div>
       </div>
     </div>

@@ -21,20 +21,19 @@ $account = array(
     'guar_address' => '',
     'guar_city' => '',
     'guar_state' => '',
-    'guar_ine' => '',
-    'group_name' => ''
+    'guar_ine' => ''
 );
 $roles = array('Miembro', 'Admin', 'Ejecutivo', 'Supervisor');
 if (isset($_GET['id'])) {
     // Get the account from the database
     $stmt = $con->prepare('SELECT name, lastname, ine, birthday, password, email, phone, address, city, state, activation_code, rememberme, role, 
-    guar_name, guar_lastname, guar_phone, guar_address, guar_city, guar_state, guar_ine, group_name  FROM accounts WHERE id = ?');
+    guar_name, guar_lastname, guar_phone, guar_address, guar_city, guar_state, guar_ine FROM accounts WHERE id = ?');
     $stmt->bind_param('i', $_GET['id']);
     $stmt->execute();
     $stmt->bind_result($account['name'], $account['lastname'], $account['ine'], $account['birthday'], $account['password'], $account['email'], 
         $account['phone'], $account['address'], $account['city'], $account['state'], $account['activation_code'], $account['rememberme'], $account['role'], 
         $account['guar_name'], $account['guar_lastname'], $account['guar_phone'], $account['guar_address'], $account['guar_city'], $account['guar_state'], 
-        $account['guar_ine'], $account['group_name']);
+        $account['guar_ine']);
     $stmt->fetch();
     $stmt->close();
 
@@ -55,13 +54,13 @@ if (isset($_GET['id'])) {
         $upperGuarCity = ucwords($_POST['guar_city']);
         $upperGuarState = ucwords($_POST['guar_state']);
         $upperGuarIne = strtoupper($_POST['guar_ine']);
-        $groupName = ucwords($_POST['group_name']);
-        $stmt = $con->prepare('UPDATE accounts SET name = ?, lastname = ?, ine = ?, birthday = ?, password = ?, email = ?, phone = ?, address = ?, city = ?, state = ?, activation_code = ?, rememberme = ?, role = ?, guar_name = ?, guar_lastname = ?, guar_phone = ?, guar_address = ?, guar_city = ?, guar_state = ?, guar_ine = ?, group_name = ? WHERE id = ?');
-        $stmt->bind_param('sssssssssssssssssssssi', $upperName, $upperLastname, $upperIne, $_POST['birthday'], $password, $_POST['email'], $_POST['phone'], 
+        $stmt = $con->prepare('UPDATE accounts SET name = ?, lastname = ?, ine = ?, birthday = ?, password = ?, email = ?, phone = ?, address = ?, city = ?, state = ?, activation_code = ?, rememberme = ?, role = ?, guar_name = ?, guar_lastname = ?, guar_phone = ?, guar_address = ?, guar_city = ?, guar_state = ?, guar_ine = ? WHERE id = ?');
+        $stmt->bind_param('ssssssssssssssssssssi', $upperName, $upperLastname, $upperIne, $_POST['birthday'], $password, $_POST['email'], $_POST['phone'], 
             $upperAddress, $upperCity, $upperState, $_POST['activation_code'], $_POST['rememberme'], $_POST['role'], $upperGuarName, 
-            $upperGuarLastname, $_POST['guar_phone'], $upperGuarAddress, $upperGuarCity,  $upperGuarState, $upperGuarIne, $groupName,  $_GET['id']);
+            $upperGuarLastname, $_POST['guar_phone'], $upperGuarAddress, $upperGuarCity,  $upperGuarState, $upperGuarIne, $_GET['id']);
         $stmt->execute();
-        header('Location: index.php');
+        $employeeID =  $_GET['id'];
+        header("Location: profile.php?id=$employeeID");
         exit;
     }
     if (isset($_POST['delete'])) {
@@ -77,11 +76,10 @@ if (isset($_GET['id'])) {
     $page = 'Create';
     if (isset($_POST['submit'])) {
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $groupName = ucwords($_POST['group_name']);
-        $stmt = $con->prepare('INSERT IGNORE INTO accounts (name,lastname,ine,birthday,password,email,phone,address,city,state,activation_code,rememberme,role,guar_name,guar_lastname,guar_phone,guar_address,guar_city,guar_state,guar_ine,group_name) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-        $stmt->bind_param('sssssssssssssssssssss', $_POST['name'], $_POST['lastname'], $_POST['ine'], $_POST['birthday'], $password, $_POST['email'], $_POST['phone'], 
+        $stmt = $con->prepare('INSERT IGNORE INTO accounts (name,lastname,ine,birthday,password,email,phone,address,city,state,activation_code,rememberme,role,guar_name,guar_lastname,guar_phone,guar_address,guar_city,guar_state,guar_ine ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
+        $stmt->bind_param('ssssssssssssssssssss', $_POST['name'], $_POST['lastname'], $_POST['ine'], $_POST['birthday'], $password, $_POST['email'], $_POST['phone'], 
             $_POST['address'], $_POST['city'], $_POST['state'], $_POST['activation_code'], $_POST['rememberme'], $_POST['role'], $_POST['guar_name'], 
-            $_POST['guar_lastname'], $_POST['guar_phone'], $_POST['guar_address'], $_POST['guar_city'],  $_POST['guar_state'], $_POST['guar_ine'], $groupName);
+            $_POST['guar_lastname'], $_POST['guar_phone'], $_POST['guar_address'], $_POST['guar_city'],  $_POST['guar_state'], $_POST['guar_ine']);
         $stmt->execute();
         header('Location: index.php');
         exit;
@@ -91,9 +89,9 @@ if (isset($_GET['id'])) {
 
 <?php 
 // Change of title 
-if ($page == 'Edit'){
+if ($page == 'Edit') {
     $Espage = 'Editando';
-}elseif ($page == 'Create'){
+}elseif ($page == 'Create') {
     $Espage = 'Creando';
 }   
 ?>
@@ -140,16 +138,12 @@ if ($page == 'Edit'){
         <input type="text" id="state" name="state" placeholder="Estado" value="<?=$account['state']?>">
 
         <p>Información de colaborador:</p>
-        <label for="role">Role</label>
+        <label for="role">Rol</label>
         <select id="role" name="role" style="margin-bottom: 30px;">
             <?php foreach ($roles as $role): ?>
             <option value="<?=$role?>"<?=$role==$account['role']?'selected':''?>><?=$role?></option>
             <?php endforeach; ?>
         </select>
-
-        <label for="group_name">Nombre de grupo</label>
-        <input type="text" id="group_name" name="group_name" placeholder="Nombre de grupo" value="<?=$account['group_name']?>">
-
 
         <p>Editar contraseña:</p>
         <label for="password">Contraseña</label>

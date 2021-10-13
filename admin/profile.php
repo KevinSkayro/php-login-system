@@ -22,19 +22,19 @@ $account = array(
     'guar_city' => '',
     'guar_state' => '',
     'guar_ine' => '',
-	'group_name' =>''
+	'plaza_name' =>''
 );
 $id = $_GET['id'];
 if (isset($_GET['id'])) {
     // Get the account from the database
     $stmt = $con->prepare('SELECT name, lastname, ine, birthday, password, email, phone, address, city, state, activation_code, rememberme, role, 
-        guar_name, guar_lastname, guar_phone, guar_address, guar_city, guar_state, guar_ine, group_name  FROM accounts WHERE id = ?');
+        guar_name, guar_lastname, guar_phone, guar_address, guar_city, guar_state, guar_ine, plaza_name  FROM accounts WHERE id = ?');
     $stmt->bind_param('i', $_GET['id']);
     $stmt->execute();
     $stmt->bind_result($account['name'], $account['lastname'], $account['ine'], $account['birthday'], $account['password'], $account['email'], 
         $account['phone'], $account['address'], $account['city'], $account['state'], $account['activation_code'], $account['rememberme'], $account['role'], 
         $account['guar_name'], $account['guar_lastname'], $account['guar_phone'], $account['guar_address'], $account['guar_city'], $account['guar_state'], 
-        $account['guar_ine'], $account['group_name']);
+        $account['guar_ine'], $account['plaza_name']);
     $stmt->fetch();
     $stmt->close();
 
@@ -51,13 +51,13 @@ if (isset($_GET['id'])) {
 	<?php
 		$fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-		if (strpos($fullUrl, "upload=success") == true){
+		if (strpos($fullUrl, "upload=success") == true) {
 			echo"<span class='success'>¡La imagen/documento ha sido subido exitosamente!</span>";
-		}elseif(strpos($fullUrl, "upload=file-too-big") == true){
+		}elseif (strpos($fullUrl, "upload=file-too-big") == true) {
 			echo"<span class='fail'>¡El documento es muy grande(10 mb por documento maximo)!</span>";
-		}elseif(strpos($fullUrl, "upload=error") == true){
+		}elseif (strpos($fullUrl, "upload=error") == true) {
 			echo"<span class='fail'>¡Hubo un error al tratar de subir este documento!</span>";
-		}elseif(strpos($fullUrl, "upload=incompatible") == true){
+		}elseif (strpos($fullUrl, "upload=incompatible") == true) {
 			echo"<span class='fail'>¡No puedes subir documentos de este tipo (solo JPG y JPEG)!</span>";
 		}
 	?>
@@ -67,19 +67,19 @@ if (isset($_GET['id'])) {
 		<?php
 			$sql = "SELECT * FROM accounts";
 			$result = mysqli_query($con, $sql);
-			if(mysqli_num_rows($result) > 0){
+			if (mysqli_num_rows($result) > 0) {
 					$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 					$resultImgOne = mysqli_query($con, $sqlImg);
 					while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 						echo "<div class='pic_container'>";
-						if($rowImgOne['imgStatus_1'] == 0){
+						if ($rowImgOne['imgStatus_1'] == 0) {
 							echo "<img src='../employee_uploads/profile1".$id.".jpg' class='profile_pics'>";
-						}else{
+						} else {
 							echo "<img src='../IMG/profiledefault.jpg' class='profile_pics'>";
 						}
 					echo "</div>";
 					}
-			}else{
+			} else {
 				echo"No existen usuarios en la base de datos!";
 			}
 		?>
@@ -97,19 +97,19 @@ if (isset($_GET['id'])) {
 	<?php
 			$sql = "SELECT * FROM accounts";
 			$result = mysqli_query($con, $sql);
-			if(mysqli_num_rows($result) > 0){
+			if (mysqli_num_rows($result) > 0) {
 					$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 					$resultImgOne = mysqli_query($con, $sqlImg);
 					while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 						echo "<div class='pic_container'>";
-						if($rowImgOne['imgStatus_2'] == 0){
+						if ($rowImgOne['imgStatus_2'] == 0) {
 							echo "<img src='../employee_uploads/profile2".$id.".jpg' class='profile_pics'>";
-						}else{
+						} else {
 							echo "<img src='../IMG/profiledefault.jpg' class='profile_pics'>";
 						}
 					echo "</div>";
 					}
-			}else{
+			} else {
 				echo"No existen usuarios en la base de datos!";
 			}
 		?>
@@ -178,8 +178,106 @@ if (isset($_GET['id'])) {
 		<td><?=$account['role']?></td>
 	</tr>
 	<tr>
-		<td>Nombre de grupo:</td>
-		<td><?=$account['group_name']?></td>
+		<?php if ($account['role'] == 'Miembro'): ?>
+			<td>Nombre de grupo:</td>
+		<?php else: ?>
+			<td>Nombre de plaza(s):</td>
+		<?endif; ?>
+		<?php
+		if ($account['role'] == 'Ejecutivo') {
+			$roleArray = explode(',', $account['plaza_name']);
+			$counter = count($roleArray) - 1;
+			if ($counter == 1) {
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[0]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames);
+				$stmt->fetch();
+				$stmt->close();
+				echo '<td>' . $plazaNames . '</td>';
+			} else if ($counter == 2) {
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[0]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames1);
+				$stmt->fetch();
+				$stmt->close();
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[1]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames2);
+				$stmt->fetch();
+				$stmt->close();
+				echo '<td>' . $plazaNames1 . '<br>' . $plazaNames2 . '</td>';
+			} else if ($counter == 3) {
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[0]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames1);
+				$stmt->fetch();
+				$stmt->close();
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[1]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames2);
+				$stmt->fetch();
+				$stmt->close();
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[2]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames3);
+				$stmt->fetch();
+				$stmt->close();
+				echo '<td>' . $plazaNames1 . '<br>' . $plazaNames2 . '<br>' . $plazaNames3 . '</td>';
+			} else if ($counter == 4) {
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[0]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames1);
+				$stmt->fetch();
+				$stmt->close();
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[1]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames2);
+				$stmt->fetch();
+				$stmt->close();
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[2]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames3);
+				$stmt->fetch();
+				$stmt->close();
+				$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+				$stmt->bind_param('i', $roleArray[3]);
+				$stmt->execute();
+				$stmt->bind_result($plazaNames4);
+				$stmt->fetch();
+				$stmt->close();
+				echo '<td>'.$plazaNames1.'<br>'.$plazaNames2.'<br>'.$plazaNames3.'<br>'.$plazaNames4.'</td>';
+			}
+
+		} else if ($account['role'] == 'Miembro') {
+			$stmt = $con->prepare('SELECT group_name FROM groups WHERE id = ?');
+			$stmt->bind_param('i', $account['plaza_name']);
+			$stmt->execute();
+			$stmt->bind_result($groupName);
+			$stmt->fetch();
+			$stmt->close();
+			echo "<td>$groupName</td>";
+
+		} else {
+			$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+			$stmt->bind_param('i', $account['plaza_name']);
+			$stmt->execute();
+			$stmt->bind_result($plazaName);
+			$stmt->fetch();
+			$stmt->close();
+			echo "<td>$plazaName</td>";
+		}
+		
+		// $stmt = $con->prepare('SELECT name, lastname, ine, birthday, password, email, phone, FROM accounts WHERE id = ?');
+		?>
 	</tr>
 </table>
 <p>Información de Aval:</p>
@@ -188,14 +286,14 @@ if (isset($_GET['id'])) {
 		<?php
 			$sql = "SELECT * FROM accounts";
 			$result = mysqli_query($con, $sql);
-			if(mysqli_num_rows($result) > 0){
+			if (mysqli_num_rows($result) > 0) {
 					$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 					$resultImgOne = mysqli_query($con, $sqlImg);
 					while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 						echo "<div class='pic_container'>";
-						if($rowImgOne['guar_imgStatus_1'] == 0){
+						if ($rowImgOne['guar_imgStatus_1'] == 0) {
 							echo "<img src='../employee_uploads/guarantor1".$id.".jpg' class='profile_pics'>";
-						}else{
+						} else {
 							echo "<img src='../IMG/profiledefault.jpg' class='profile_pics'>";
 						}
 					echo "</div>";
@@ -218,19 +316,19 @@ if (isset($_GET['id'])) {
 	<?php
 			$sql = "SELECT * FROM accounts";
 			$result = mysqli_query($con, $sql);
-			if(mysqli_num_rows($result) > 0){
+			if (mysqli_num_rows($result) > 0) {
 					$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 					$resultImgOne = mysqli_query($con, $sqlImg);
 					while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 						echo "<div class='pic_container'>";
-						if($rowImgOne['guar_imgStatus_2'] == 0){
+						if ($rowImgOne['guar_imgStatus_2'] == 0) {
 							echo "<img src='../employee_uploads/guarantor2".$id.".jpg' class='profile_pics'>";
-						}else{
+						} else {
 							echo "<img src='../IMG/profiledefault.jpg' class='profile_pics'>";
 						}
 					echo "</div>";
 					}
-			}else{
+			} else {
 				echo"No existen usuarios en la base de datos!";
 			}
 		?>

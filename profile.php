@@ -1,14 +1,14 @@
 <?php
-include 'dbhandler.php';
+include 'processes/dbhandler.php';
 check_loggedin($con);
 // output message (errors, etc)
 $msg = '';
 // We don't have the password or email info stored in sessions so instead we can get the results from the database.
-$stmt = $con->prepare('SELECT name, lastname, ine, birthday, phone, address, city, state, password, email, guar_name, guar_lastname, guar_phone, guar_address, guar_city, guar_state, guar_ine, activation_code, role FROM accounts WHERE id = ?');
+$stmt = $con->prepare('SELECT name, lastname, ine, birthday, phone, address, city, state, password, email, guar_name, guar_lastname, guar_phone, guar_address, guar_city, guar_state, guar_ine, activation_code, role, plaza_name FROM accounts WHERE id = ?');
 // In this case we can use the account ID to get the account info.
 $stmt->bind_param('i', $_SESSION['id']);
 $stmt->execute();
-$stmt->bind_result($name, $lastname, $ine, $dob, $phone, $address, $city, $state, $password, $email, $guarName, $guarLastname, $guarPhone, $guarAddress, $guarCity, $guarState, $guarIne, $activation_code, $role);
+$stmt->bind_result($name, $lastname, $ine, $dob, $phone, $address, $city, $state, $password, $email, $guarName, $guarLastname, $guarPhone, $guarAddress, $guarCity, $guarState, $guarIne, $activation_code, $role, $plazaName);
 $stmt->fetch();
 $stmt->close();
 // Handle edit profile post data
@@ -72,7 +72,7 @@ if (isset($_POST['name'], $_POST['newPassword'], $_POST['repeatPwd'], $_POST['em
 }
 include_once  'header.php';
 ?>
-		<?php if (!isset($_GET['action'])): ?>
+	<?php if (!isset($_GET['action'])): ?>
 		<div class="content profile">
 			<h2>Perfil</h2>
 			<div class="block">
@@ -80,13 +80,13 @@ include_once  'header.php';
 						<?php
 							$fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-							if (strpos($fullUrl, "upload=success") == true){
+							if (strpos($fullUrl, "upload=success") == true) {
 								echo"<span class='success'>¡La imagen/documento ha sido subido exitosamente!</span>";
-							}elseif(strpos($fullUrl, "upload=file-too-big") == true){
+							} elseif (strpos($fullUrl, "upload=file-too-big") == true) {
 								echo"<span class='fail'>¡El documento es muy grande(10 mb por documento maximo)!</span>";
-							}elseif(strpos($fullUrl, "upload=error") == true){
+							} elseif (strpos($fullUrl, "upload=error") == true) {
 								echo"<span class='fail'>¡Hubo un error al tratar de subir este documento!</span>";
-							}elseif(strpos($fullUrl, "upload=incompatible") == true){
+							} elseif (strpos($fullUrl, "upload=incompatible") == true) {
 								echo"<span class='fail'>¡No puedes subir documentos de este tipo (solo JPG y JPEG)!</span>";
 							}
 						?>
@@ -96,25 +96,25 @@ include_once  'header.php';
 						<?php
 							$sql = "SELECT * FROM accounts";
 							$result = mysqli_query($con, $sql);
-							if(mysqli_num_rows($result) > 0){
+							if (mysqli_num_rows($result) > 0) {
 									$id = $_SESSION['id'];
 									$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 									$resultImgOne = mysqli_query($con, $sqlImg);
 									while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 										echo "<div class='pic_container'>";
-										if($rowImgOne['imgStatus_1'] == 0){
+										if ($rowImgOne['imgStatus_1'] == 0) {
 											echo "<img src='./employee_uploads/profile1".$id.".jpg' class='profile_pics'>";
-										}else{
+										} else {
 											echo "<img src='./IMG/profiledefault.jpg' class='profile_pics'>";
 										}
 									echo "</div>";
 									}
-							}else{
+							} else {
 								echo"No existen usuarios en la base de datos!";
 							}
 						?>
 						<span>Comprobante de domicilio</span>
-						<form action="upload.php" method="post" enctype="multipart/form-data">
+						<form action="processes/upload.php" method="post" enctype="multipart/form-data">
 							<input type="file" name="file" id="select_file1" hidden>
 							<div class="choose_file_container">
 								<label for="select_file1">Selecciona documento</label>
@@ -127,27 +127,27 @@ include_once  'header.php';
 					<?php
 							$sql = "SELECT * FROM accounts";
 							$result = mysqli_query($con, $sql);
-							if(mysqli_num_rows($result) > 0){
+							if (mysqli_num_rows($result) > 0) {
 								// while($row = mysqli_fetch_assoc($result)){
 									$id = $_SESSION['id'];
 									$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 									$resultImgOne = mysqli_query($con, $sqlImg);
 									while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 										echo "<div class='pic_container'>";
-										if($rowImgOne['imgStatus_2'] == 0){
+										if ($rowImgOne['imgStatus_2'] == 0) {
 											echo "<img src='./employee_uploads/profile2".$id.".jpg' class='profile_pics'>";
-										}else{
+										} else {
 											echo "<img src='./IMG/profiledefault.jpg' class='profile_pics'>";
 										}
 									echo "</div>";
 									}
 								// }
-							}else{
+							} else {
 								echo"No existen usuarios en la base de datos!";
 							}
 						?>
 						<span>Comprobante de identificación(INE)</span>
-						<form action="upload.php" method="post" enctype="multipart/form-data">
+						<form action="processes/upload.php" method="post" enctype="multipart/form-data">
 							<input type="file" name="file" id="select_file2" hidden>
 							<div class="choose_file_container">
 								<label for="select_file2">Selecciona documento</label>
@@ -211,6 +211,105 @@ include_once  'header.php';
 						<td>Puesto de trabajo:</td>
 						<td><?=$role?></td>
 					</tr>
+					<tr>
+						<?php if ($role == 'Miembro'): ?>
+							<td>Nombre de grupo:</td>
+						<?php else: ?>
+							<td>Nombre de plaza(s):</td>
+						<?endif; ?>
+						<?php
+						if ($role == 'Ejecutivo') {
+							$roleArray = explode(',', $plazaName);
+							$counter = count($roleArray) - 1;
+							if ($counter == 1) {
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[0]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames);
+								$stmt->fetch();
+								$stmt->close();
+								echo '<td>' . $plazaNames . '</td>';
+							} else if ($counter == 2) {
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[0]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames1);
+								$stmt->fetch();
+								$stmt->close();
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[1]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames2);
+								$stmt->fetch();
+								$stmt->close();
+								echo '<td>' . $plazaNames1 . '<br>' . $plazaNames2 . '</td>';
+							} else if ($counter == 3) {
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[0]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames1);
+								$stmt->fetch();
+								$stmt->close();
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[1]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames2);
+								$stmt->fetch();
+								$stmt->close();
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[2]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames3);
+								$stmt->fetch();
+								$stmt->close();
+								echo '<td>' . $plazaNames1 . '<br>' . $plazaNames2 . '<br>' . $plazaNames3 . '</td>';
+							} else if ($counter == 4) {
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[0]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames1);
+								$stmt->fetch();
+								$stmt->close();
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[1]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames2);
+								$stmt->fetch();
+								$stmt->close();
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[2]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames3);
+								$stmt->fetch();
+								$stmt->close();
+								$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+								$stmt->bind_param('i', $roleArray[3]);
+								$stmt->execute();
+								$stmt->bind_result($plazaNames4);
+								$stmt->fetch();
+								$stmt->close();
+								echo '<td>'.$plazaNames1.'<br>'.$plazaNames2.'<br>'.$plazaNames3.'<br>'.$plazaNames4.'</td>';
+							}
+						}else if ($role == 'Miembro') {
+							$stmt = $con->prepare('SELECT group_name FROM groups WHERE id = ?');
+							$stmt->bind_param('i', $plazaName);
+							$stmt->execute();
+							$stmt->bind_result($groupName);
+							$stmt->fetch();
+							$stmt->close();
+							echo "<td>$groupName</td>";
+				
+						} else {
+							$stmt = $con->prepare('SELECT plaza_name FROM plazas WHERE id = ?');
+							$stmt->bind_param('i', $plazaName);
+							$stmt->execute();
+							$stmt->bind_result($plazaName);
+							$stmt->fetch();
+							$stmt->close();
+							echo "<td>$plazaName</td>";
+						}
+						?>
+					</tr>
 				</table>
 				<p>Información de Aval:</p>
 				<div class="pic_uploader_container">
@@ -218,27 +317,27 @@ include_once  'header.php';
 						<?php
 							$sql = "SELECT * FROM accounts";
 							$result = mysqli_query($con, $sql);
-							if(mysqli_num_rows($result) > 0){
+							if (mysqli_num_rows($result) > 0) {
 								// while($row = mysqli_fetch_assoc($result)){
 									$id = $_SESSION['id'];
 									$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 									$resultImgOne = mysqli_query($con, $sqlImg);
 									while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 										echo "<div class='pic_container'>";
-										if($rowImgOne['guar_imgStatus_1'] == 0){
+										if ($rowImgOne['guar_imgStatus_1'] == 0) {
 											echo "<img src='./employee_uploads/guarantor1".$id.".jpg' class='profile_pics'>";
-										}else{
+										} else {
 											echo "<img src='./IMG/profiledefault.jpg' class='profile_pics'>";
 										}
 									echo "</div>";
 									}
 								// }
-							}else{
+							} else {
 								echo"No existen usuarios en la base de datos!";
 							}
 						?>
 						<span>Comprobante de domicilio</span>
-						<form action="upload.php" method="post" enctype="multipart/form-data">
+						<form action="processes/upload.php" method="post" enctype="multipart/form-data">
 							<input type="file" name="file" id="select_file3" hidden>
 							<div class="choose_file_container">
 								<label for="select_file3">Selecciona documento</label>
@@ -251,27 +350,27 @@ include_once  'header.php';
 					<?php
 							$sql = "SELECT * FROM accounts";
 							$result = mysqli_query($con, $sql);
-							if(mysqli_num_rows($result) > 0){
+							if (mysqli_num_rows($result) > 0) {
 								// while($row = mysqli_fetch_assoc($result)){
 									$id = $_SESSION['id'];
 									$sqlImg = "SELECT * FROM accounts WHERE id='$id'";
 									$resultImgOne = mysqli_query($con, $sqlImg);
 									while ($rowImgOne = mysqli_fetch_assoc($resultImgOne)) {
 										echo "<div class='pic_container'>";
-										if($rowImgOne['guar_imgStatus_2'] == 0){
+										if ($rowImgOne['guar_imgStatus_2'] == 0) {
 											echo "<img src='./employee_uploads/guarantor2".$id.".jpg' class='profile_pics'>";
-										}else{
+										} else {
 											echo "<img src='./IMG/profiledefault.jpg' class='profile_pics'>";
 										}
 									echo "</div>";
 									}
 								// }
-							}else{
+							} else {
 								echo"No existen usuarios en la base de datos!";
 							}
 						?>
 						<span>Comprobante de identificación(INE)</span>
-						<form action="upload.php" method="post" enctype="multipart/form-data">
+						<form action="processes/upload.php" method="post" enctype="multipart/form-data">
 							<input type="file" name="file" id="select_file4" hidden>
 							<div class="choose_file_container">
 								<label for="select_file4">Selecciona documento</label>
@@ -314,7 +413,7 @@ include_once  'header.php';
 				<a class="profile_btn" href="profile.php?action=edit">Editar Perfil</a>
 			</div>
 		</div>
-		<?php elseif ($_GET['action'] == 'edit'): ?>
+	<?php elseif ($_GET['action'] == 'edit'): ?>
 		<div class="content profile">
 			<h2>Edición de perfil</h2>
 			<div class="note">

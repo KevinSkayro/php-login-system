@@ -5,18 +5,20 @@
 		<meta name="viewport" content="width=device-width,minimum-scale=1">
 		<?php
 		$fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		if (strpos($fullUrl, "home") == true){
+		if (strpos($fullUrl, "home") == true) {
 			echo "<title>Inicio</title>";
-		}else if(strpos($fullUrl, "profile") == true){
+		} else if (strpos($fullUrl, "profile") == true) {
 			echo "<title>Perfil</title>";
-		}else if(strpos($fullUrl, "customer") == true){
+		} else if (strpos($fullUrl, "customer") == true) {
 			$id = $_GET['id'];
 			echo "<title>Cliente $id</title>";
-		}else if(strpos($fullUrl, "addCustomer.php?id=") == true){
+		} else if (strpos($fullUrl, "addCustomer.php?id=") == true) {
 			$id = $_GET['id'];
 			echo "<title>Editando cliente $id...</title>";
-		}else if(strpos($fullUrl, "addCustomer") == true){
+		} else if (strpos($fullUrl, "addCustomer") == true) {
 			echo "<title>Añadiendo nuevo cliente</title>";
+		} else if (strpos($fullUrl, "editPayment") == true) {
+			echo "<title>Editando pago</title>";
 		}
 		?>
 		<link rel="stylesheet" href="./CSS/reset.css" />
@@ -31,7 +33,9 @@
 		<nav class="navtop">
 			<div class="nav_container">
 				<div class="nav_logo">
-					<h1 >Website Title</h1>
+					<a href="home.php">
+						<h1>Login System</h1>
+					</a>
 				</div>
 				<div class="nav_links" data-nav-links>
 					<a href="home.php"><i class="fas fa-home"></i>Inicio</a>
@@ -39,7 +43,7 @@
 					<?php if ($_SESSION['role'] == 'Admin'): ?>
 					<a href="admin/index.php"><i class="fas fa-user-cog"></i>Admin</a>
 					<?php endif; ?>
-					<a href="logout.php"><i class="fas fa-sign-out-alt"></i>Salir</a>
+					<a href="processes/logout.php"><i class="fas fa-sign-out-alt"></i>Salir</a>
 				</div>
 				<div class="burger_menu" data-burger-menu>
 					<div class="burger_line line_one"></div>

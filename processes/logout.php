@@ -6,5 +6,5 @@ if (isset($_COOKIE['rememberme'])) {
     setcookie('rememberme', '', time() - 3600);
 }
 // Redirect to the login page:
-header('Location: index.php');
+header('Location: ../index.php');
 ?>

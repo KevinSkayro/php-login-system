@@ -5,9 +5,8 @@ if (!isset($_POST['id'], $_POST['password'])) {
 	// Could not get the data that should have been sent.
 	exit('¡Por favor llena los dos espacios código de identificación y contraseña!');
 }
-// Prepare our SQL, preparing the SQL statement will prevent SQL injection.
+// Preparing the SQL statement will prevent SQL injection.
 $stmt = $con->prepare('SELECT name , password, rememberme, activation_code, role FROM accounts WHERE id = ?');
-// Bind parameters (s = string, i = int, b = blob, etc), in our case the username is a string so we use "s"
 $stmt->bind_param('s', $_POST['id']);
 $stmt->execute();
 // Store the result so we can check if the account exists in the database.
@@ -18,12 +17,12 @@ if ($stmt->num_rows > 0) {
 	$stmt->fetch();
 	$stmt->close();
 	// Account exists, now we verify the password.
-	// Note: remember to use password_hash in your registration file to store the hashed passwords.
+	// Use password_hash in your registration file to store the hashed passwords.
 	if (password_verify($_POST['password'], $password)) {
 		// Check if the account is activated
 		if (account_activation && $activation_code != 'activated') {
 			// User has not activated their account, output the message
-			echo '¡Por favor activa tu cuenta para iniciar sesión ,  click <a href="resendactivation.php">aquí</a> para reenviar correo de activación!';
+			echo '¡Por favor activa tu cuenta para iniciar sesión ,  click <a href="../resendactivation.php">aquí</a> para reenviar correo de activación!';
 		} else {
 			// Verification success! User has loggedin!
 			// Create sessions so we know the user is logged in, they basically act like cookies but remember the data on the server.
@@ -45,7 +44,7 @@ if ($stmt->num_rows > 0) {
 				$stmt->execute();
 				$stmt->close();
 			}
-			echo 'Success'; // Do not change this line as it will be used to check with the AJAX code
+			echo 'Success'; // """"DO NOT"""" change this line as it will be used to check with the AJAX code
 		}
 	} else {
 		// Incorrect password

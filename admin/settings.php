@@ -1,7 +1,7 @@
 <?php
 include 'main.php';
 // Read the configuration file
-$config_file = file_get_contents('../config.php');
+$config_file = file_get_contents('../processes/config.php');
 preg_match_all('/define\(\'(.*?)\', ?(.*?)\)/', $config_file, $matches);
 // Format key function
 function format_key($key) {
@@ -29,7 +29,7 @@ if (!empty($_POST)) {
         $v = in_array(strtolower($v), ['true', 'false']) ? strtolower($v) : '\'' . $v . '\'';
         $config_file = preg_replace('/define\(\'' . $k . '\'\, ?(.*?)\)/s', 'define(\'' . $k . '\',' . $v . ')', $config_file);
     }
-    file_put_contents('../config.php', $config_file);
+    file_put_contents('../processes/config.php', $config_file);
     header('Location: settings.php');
     exit;
 }
