@@ -21,8 +21,8 @@ This project is not finished, but it works as is. I'll be developing this and up
 If you want to try it take the next into consideration:
 
 - The app is in Spanish for reasons already mentioned.
-- You have to download a server like XAMPP to run this since it has PHP and create an SQL DB
-- To create the DB just run the QSL_db_creator inside your phpMyAdmin or any other SQL DB manager
+- You have to download a server like XAMPP to run this since it has PHP and also create an SQL DB
+- To create the DB just execute the SQL_db_creator file on phpMyAdmin or any other SQL DB manager
 
 Accounts:
 
