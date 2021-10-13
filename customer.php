@@ -529,11 +529,6 @@ include_once  'header.php';
 					<i class="fas fa-chevron-left"></i> Atrás
 				</div>
 			</div>
-			<div class="part_pay_container top_btns">
-				<div class="part_pay_btn" data-part-pay-btn>
-				<i class="fas fa-coins"></i> Parcial
-				</div>
-			</div>
 		</div>
 		
 		<h2>Forma de pago</h2>
