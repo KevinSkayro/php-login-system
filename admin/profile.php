@@ -182,7 +182,7 @@ if (isset($_GET['id'])) {
 			<td>Nombre de grupo:</td>
 		<?php else: ?>
 			<td>Nombre de plaza(s):</td>
-		<?endif; ?>
+		<?php endif; ?>
 		<?php
 		if ($account['role'] == 'Ejecutivo') {
 			$roleArray = explode(',', $account['plaza_name']);

@@ -216,7 +216,7 @@ include_once  'header.php';
 							<td>Nombre de grupo:</td>
 						<?php else: ?>
 							<td>Nombre de plaza(s):</td>
-						<?endif; ?>
+						<?php endif; ?>
 						<?php
 						if ($role == 'Ejecutivo') {
 							$roleArray = explode(',', $plazaName);
@@ -486,7 +486,7 @@ include_once  'header.php';
 				</form>
 			</div>
 		</div>
-		<?php endif; ?>
+	<?php endif; ?>
 		<script>
 			const selectFileOne = document.getElementById("select_file1");
 			const fileChosenOne = document.getElementById("file_chosen_one");
